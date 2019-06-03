@@ -47,28 +47,27 @@ router.post("/register", (req, res) => {
   
   });
   
-
-  router.post("/login", (req, res) => {
-    const user = req.body;
-    fs.readFile("./src/data/data.json", function(err, data) {
-      if (err) {
-        throw err;
+router.post("/login", (req, res) => {
+  const user = req.body;
+  fs.readFile("./src/data/data.json", function(err, data) {
+    if (err) {
+      throw err;
+    } else {
+      if (data.length > 0) {
+        var parseData = JSON.parse(data);
+        parseData.users.forEach(existingUser => {
+          if (existingUser.email == user.email && existingUser.password == user.password) {
+            console.log("login successful");
+            res.json();
+            return;
+          }
+        });
       } else {
-        if (data.length > 0) {
-          var parseData = JSON.parse(data);
-          parseData.users.forEach(existingUser => {
-            if (existingUser.email == user.email && existingUser.password == user.password) {
-              console.log("login successful");
-              res.json();
-              return;
-            }
-          });
-        } else {
-            throw new Error("No users exist");
-        }
+        throw new Error("No users exist");
       }
-    });
+    }
   });
+});
 
   router.post("/update", (req, res) => {
     const user = req.body;
