@@ -120,7 +120,7 @@ router.post("/login", (req, res) => {
         } else {
           if (data.length > 0) {
             var parseData = JSON.parse(data);
-            parseData.users = parseData.users.filter(user => user.id === req.params.id);
+            parseData.users = parseData.users.filter(user => !(user.id === req.params.id));
 
             fs.writeFile("./src/data/data.json", JSON.stringify(parseData), function(err) {
                 if (err) {
