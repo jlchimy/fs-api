@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const ValidationService = require("../services/validation-service");
+const ValidationService = require("./src/services/validation-service");
 const validationService = new ValidationService();
 
 var fs = require("fs");
