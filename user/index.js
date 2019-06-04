@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
 
-const ValidationService = require("./src/services/validation-service");
-const validationService = new ValidationService();
+// const ValidationService = require("./src/services/validation-service");
+// const validationService = new ValidationService();
 
 var fs = require("fs");
 
@@ -12,9 +12,9 @@ router.get("/", (req, res) => {
 
 router.post("/register", (req, res) => {
     const user = req.body;
-    if (!validationService.isValidRegisterBody(user)) {
-        throw new Error("Invalid payload");
-    }
+    // if (!validationService.isValidRegisterBody(user)) {
+    //     throw new Error("Invalid payload");
+    // }
     fs.readFile("./src/data/data.json", function(err, data) {
       if (err) {
         throw err;
@@ -24,9 +24,9 @@ router.post("/register", (req, res) => {
           var parseData = JSON.parse(data);
           parseData.users.forEach(existingUser => {
             if (existingUser.email == user.email) {
-              throw new Error("Email exists already!");
+              throw new Error("Email already in use!");
             } else {
-              newID++;
+              newID = parseInt(existingUser.id);
             }
           });
         }
@@ -45,7 +45,7 @@ router.post("/register", (req, res) => {
           if (err) {
               throw err;
           }
-          console.log("Registration successful");
+          console.log("-----Registration successful-----");
           return parseData.users;
         });
       }
@@ -66,7 +66,7 @@ router.post("/login", (req, res) => {
         var parseData = JSON.parse(data);
         parseData.users.forEach(existingUser => {
           if (existingUser.email == user.email && existingUser.password == user.password) {
-            console.log("login successful");
+            console.log("-----Login successful-----");
             res.json();
             return;
           }
@@ -104,7 +104,7 @@ router.post("/login", (req, res) => {
           fs.writeFile("./src/data/data.json", JSON.stringify(parseData), function(err) {
             if (err) throw err;
             res.json(updateUser);
-            console.log("user updated successfully");
+            console.log("-----User updated successfully-----");
           });
         } else {
             throw new Error("No users exist");
@@ -127,7 +127,7 @@ router.post("/login", (req, res) => {
                     throw err;
                 }
                 res.json({ status: "User deleted" });
-                console.log("deletion successful");
+                console.log("-----Deletion successful-----");
             });
           } else {
               throw new Error("No users exist");

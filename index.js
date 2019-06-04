@@ -4,13 +4,17 @@ const app = express();
 
 var properties = new Array();
 
-var users = new Array();
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// Create router for users in users/index.js
 const usersRouter = require("./user/index");
 app.use("/api/users", usersRouter);
+
+
+// Access validation service
+// const ValidationService = require("./src/services/validation-service");
+// app.use("/api/users", ValidationService);
 
 app.get("/", (req, res) => {
     console.log(req.headers);
@@ -35,6 +39,19 @@ app.post("/properties", (req, res) => {
 });
 
 
+app.post("/api/users", (req, res) => {
+   const user = req.body;
+   const bodyFirstname = user.name;
+   const bodySurname = user.surname;
+   const bodyEmail = user.email;
+   const bodyPassword = user.password;
+
+   if (!bodyEmail) {
+     return res.status(400).json({message: "Email required"});
+   }
+
+   res.send("POST Users api");
+});
 
 
 

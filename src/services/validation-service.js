@@ -1,4 +1,4 @@
-module.exports = class AuthService {
+module.exports = class ValidationService {
   constructor() {}
 
   isValidRegisterBody(user) {
