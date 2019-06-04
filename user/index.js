@@ -11,7 +11,7 @@ router.get("/", (req, res) => {
 });
 
 
-//-------------------------------Register Users Function-------------------------------//
+//-------------------------------------Register User Function------------------------------------//
 router.post("/register", (req, res) => {
     const user = req.body;
     if (!validationService.isValidRegisterBody(user)) {
@@ -43,7 +43,7 @@ router.post("/register", (req, res) => {
           role: user.role
         };
         parseData.users.push(newUser);
-        res.json(user);
+        res.status(200).json(user);
         fs.writeFile("./src/data/data.json", JSON.stringify(parseData), function(err) {
           if (err) {
               throw err;
@@ -57,7 +57,7 @@ router.post("/register", (req, res) => {
   });
   
 
-//-------------------------------User Login Function-------------------------------//
+//--------------------------------------User Login Function--------------------------------------//
 router.post("/login", (req, res) => {
   const user = req.body;
   if (!validationService.isValidRegisterBody(user)) {
@@ -76,7 +76,7 @@ router.post("/login", (req, res) => {
             email = true;
             if (existingUser.password == user.password) {
               console.log("-----Login successful-----");
-              res.json({ status: "Logged In" });
+              res.status(200).json({ status: "Logged In" });
               password = true;
               return;
             }
@@ -99,7 +99,7 @@ router.post("/login", (req, res) => {
 });
 
 
-//-------------------------------Update User Function-------------------------------//
+//--------------------------------------Update User Function-------------------------------------//
 router.post("/update", (req, res) => {
   const user = req.body;
     fs.readFile("./src/data/data.json", function(err, data) {
@@ -127,7 +127,7 @@ router.post("/update", (req, res) => {
         parseData.users.push(updateUser);
         fs.writeFile("./src/data/data.json", JSON.stringify(parseData), function(err) {
           if (err) throw err;
-          res.json(updateUser);
+          res.status(200).json(updateUser);
           console.log("-----User updated successfully-----");
         });
       } else {
@@ -138,7 +138,7 @@ router.post("/update", (req, res) => {
 });
 
 
-//-------------------------------Delete User Function-------------------------------//
+//--------------------------------------Delete User Function-------------------------------------//
 router.post("/delete/:id", (req, res) => {
   fs.readFile("./src/data/data.json", function(err, data) {
     if (err) {
@@ -165,7 +165,7 @@ router.post("/delete/:id", (req, res) => {
           if (err) {
             throw err;
           }
-          res.json({ status: "User deleted" });
+          res.status(200).json({ status: "User deleted" });
           console.log("-----Deletion successful-----");
         });
       } else {
