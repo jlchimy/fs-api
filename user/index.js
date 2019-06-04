@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
 
-// const ValidationService = require("./src/services/validation-service");
-// const validationService = new ValidationService();
+const ValidationService = require("../src/services/validation-service");
+const validationService = new ValidationService();
 
 var fs = require("fs");
 
@@ -12,9 +12,9 @@ router.get("/", (req, res) => {
 
 router.post("/register", (req, res) => {
     const user = req.body;
-    // if (!validationService.isValidRegisterBody(user)) {
-    //     throw new Error("Invalid payload");
-    // }
+    if (!validationService.isValidRegisterBody(user)) {
+        throw new Error("Invalid payload");
+    }
     fs.readFile("./src/data/data.json", function(err, data) {
       if (err) {
         throw err;
@@ -30,6 +30,7 @@ router.post("/register", (req, res) => {
             }
           });
         }
+        // Sets id to 1 + (id of last user), or 1 if none exist.
         const newUser = {
           id: (newID + 1).toString(),
           name: user.name,
@@ -63,14 +64,29 @@ router.post("/login", (req, res) => {
       throw err;
     } else {
       if (data.length > 0) {
+        var email = false;
+        var password = false;
         var parseData = JSON.parse(data);
         parseData.users.forEach(existingUser => {
-          if (existingUser.email == user.email && existingUser.password == user.password) {
-            console.log("-----Login successful-----");
-            res.json();
-            return;
+          if (existingUser.email == user.email) {
+            email = true;
+            if (existingUser.password == user.password) {
+              console.log("-----Login successful-----");
+              res.json({ status: "Logged In" });
+              password = true;
+              return;
+            }
           }
         });
+        if (!password) {
+          if (!email) {
+            console.log("-----Login unsuccessful-----");
+            res.json({ status: "Email Does Not Exist" });
+          } else {
+            console.log("-----Login unsuccessful-----");
+            res.json({ status: "Incorrect Password" });
+          }
+        }
       } else {
         throw new Error("No users exist");
       }
@@ -120,7 +136,20 @@ router.post("/login", (req, res) => {
         } else {
           if (data.length > 0) {
             var parseData = JSON.parse(data);
+
+            // Checks if id parameter is given/indicated and is a number.
+            if (!req.params.id || isNaN(req.params.id)) {
+              return res.status(400).json({message: "Please pass in a valid userID"});
+            }
+
+            // Filters out element with param.id from users.
+            const len = parseData.users.length;
             parseData.users = parseData.users.filter(user => !(user.id === req.params.id));
+
+            // Checks if user existed by checking if number of users changed.
+            if (len == parseData.users.length) {
+              return res.status(400).json({message: "User with ID does not exist"});
+            }
 
             fs.writeFile("./src/data/data.json", JSON.stringify(parseData), function(err) {
                 if (err) {
