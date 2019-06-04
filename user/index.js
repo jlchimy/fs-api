@@ -102,12 +102,14 @@ router.post("/login", (req, res) => {
       } else {
         if (data.length > 0) {
           var parseData = JSON.parse(data);
+          var oldID;
           parseData.users = parseData.users.filter(existingUser => {
+            oldID = existingUser.id;
             return existingUser.email !== user.email;
           });
     
           const updateUser = {
-            id: user.id,
+            id: oldID,
             name: user.name,
             surname: user.surname,
             cellPhone: user.cellPhone,
@@ -129,40 +131,40 @@ router.post("/login", (req, res) => {
     });
   });
 
-  router.post("/delete/:id", (req, res) => {
-    fs.readFile("./src/data/data.json", function(err, data) {
-        if (err) {
-          throw err;
-        } else {
-          if (data.length > 0) {
-            var parseData = JSON.parse(data);
+router.post("/delete/:id", (req, res) => {
+  fs.readFile("./src/data/data.json", function(err, data) {
+    if (err) {
+      throw err;
+    } else {
+      if (data.length > 0) {
+        var parseData = JSON.parse(data);
 
-            // Checks if id parameter is given/indicated and is a number.
-            if (!req.params.id || isNaN(req.params.id)) {
-              return res.status(400).json({message: "Please pass in a valid userID"});
-            }
-
-            // Filters out element with param.id from users.
-            const len = parseData.users.length;
-            parseData.users = parseData.users.filter(user => !(user.id === req.params.id));
-
-            // Checks if user existed by checking if number of users changed.
-            if (len == parseData.users.length) {
-              return res.status(400).json({message: "User with ID does not exist"});
-            }
-
-            fs.writeFile("./src/data/data.json", JSON.stringify(parseData), function(err) {
-                if (err) {
-                    throw err;
-                }
-                res.json({ status: "User deleted" });
-                console.log("-----Deletion successful-----");
-            });
-          } else {
-              throw new Error("No users exist");
-          }
+        // Checks if id parameter is given/indicated and is a number.
+        if (!req.params.id || isNaN(req.params.id)) {
+          return res.status(400).json({message: "Please pass in a valid userID"});
         }
-    });
+
+        // Filters out element with param.id from users.
+        const len = parseData.users.length;
+        parseData.users = parseData.users.filter(user => !(user.id === req.params.id));
+
+        // Checks if user existed by checking if number of users changed.
+        if (len == parseData.users.length) {
+          return res.status(400).json({message: "User with ID does not exist"});
+        }
+
+        fs.writeFile("./src/data/data.json", JSON.stringify(parseData), function(err) {
+          if (err) {
+            throw err;
+          }
+          res.json({ status: "User deleted" });
+          console.log("-----Deletion successful-----");
+        });
+      } else {
+        throw new Error("No users exist");
+      }
+    }
   });
+});
 
 module.exports = router;
