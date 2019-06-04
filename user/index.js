@@ -1,6 +1,9 @@
 const express = require("express");
 const router = express.Router();
 
+const ValidationService = require("../services/validation-service");
+const validationService = new ValidationService();
+
 var fs = require("fs");
 
 router.get("/", (req, res) => {
@@ -9,6 +12,9 @@ router.get("/", (req, res) => {
 
 router.post("/register", (req, res) => {
     const user = req.body;
+    if (!validationService.isValidRegisterBody(user)) {
+        throw new Error("Invalid payload");
+    }
     fs.readFile("./src/data/data.json", function(err, data) {
       if (err) {
         throw err;
@@ -49,6 +55,9 @@ router.post("/register", (req, res) => {
   
 router.post("/login", (req, res) => {
   const user = req.body;
+  if (!validationService.isValidRegisterBody(user)) {
+    throw new Error400("Invalid payload");
+  }
   fs.readFile("./src/data/data.json", function(err, data) {
     if (err) {
       throw err;
