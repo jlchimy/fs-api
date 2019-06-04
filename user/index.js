@@ -10,6 +10,8 @@ router.get("/", (req, res) => {
     res.send("Users default path");
 });
 
+
+//-------------------------------Register Users Function-------------------------------//
 router.post("/register", (req, res) => {
     const user = req.body;
     if (!validationService.isValidRegisterBody(user)) {
@@ -54,6 +56,8 @@ router.post("/register", (req, res) => {
   
   });
   
+
+//-------------------------------User Login Function-------------------------------//
 router.post("/login", (req, res) => {
   const user = req.body;
   if (!validationService.isValidRegisterBody(user)) {
@@ -94,43 +98,47 @@ router.post("/login", (req, res) => {
   });
 });
 
-  router.post("/update", (req, res) => {
-    const user = req.body;
-    fs.readFile("./src/data/data.json", function(err, data) {
-      if (err) {
-        throw err;
-      } else {
-        if (data.length > 0) {
-          var parseData = JSON.parse(data);
-          var oldID;
-          parseData.users = parseData.users.filter(existingUser => {
-            oldID = existingUser.id;
-            return existingUser.email !== user.email;
-          });
-    
-          const updateUser = {
-            id: oldID,
-            name: user.name,
-            surname: user.surname,
-            cellPhone: user.cellPhone,
-            email: user.email,
-            password: user.password,
-            role: user.role
-          };
-    
-          parseData.users.push(updateUser);
-          fs.writeFile("./src/data/data.json", JSON.stringify(parseData), function(err) {
-            if (err) throw err;
-            res.json(updateUser);
-            console.log("-----User updated successfully-----");
-          });
-        } else {
-            throw new Error("No users exist");
-        }
-      }
-    });
-  });
 
+//-------------------------------Update User Function-------------------------------//
+router.post("/update", (req, res) => {
+  const user = req.body;
+    fs.readFile("./src/data/data.json", function(err, data) {
+    if (err) {
+      throw err;
+    } else {
+      if (data.length > 0) {
+        var parseData = JSON.parse(data);
+        var oldID;
+        parseData.users = parseData.users.filter(existingUser => {
+          oldID = existingUser.id;
+          return existingUser.email !== user.email;
+        });
+    
+        const updateUser = {
+          id: oldID,
+          name: user.name,
+          surname: user.surname,
+          cellPhone: user.cellPhone,
+          email: user.email,
+          password: user.password,
+          role: user.role
+        };
+    
+        parseData.users.push(updateUser);
+        fs.writeFile("./src/data/data.json", JSON.stringify(parseData), function(err) {
+          if (err) throw err;
+          res.json(updateUser);
+          console.log("-----User updated successfully-----");
+        });
+      } else {
+          throw new Error("No users exist");
+      }
+    }
+  });
+});
+
+
+//-------------------------------Delete User Function-------------------------------//
 router.post("/delete/:id", (req, res) => {
   fs.readFile("./src/data/data.json", function(err, data) {
     if (err) {
