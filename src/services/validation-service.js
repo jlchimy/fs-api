@@ -2,10 +2,6 @@ module.exports = class ValidationService {
   constructor() {}
 
   isValidRegisterBody(user) {
-    if (!user.name || !user.surname) {
-      console.log("-----------no name or surname-----------");
-      return false;
-    }
     if (!this.isValidEmailAddress(user.email)) {
       console.log("-----------email bad!-----------");
       return false;

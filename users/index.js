@@ -12,53 +12,49 @@ router.get("/", (req, res) => {
 
 
 //-------------------------------------Register User Function------------------------------------//
-router.post("/register", (req, res) => {
-    const user = req.body;
-    if (!validationService.isValidRegisterBody(user)) {
-        throw new Error("Invalid payload");
-    }
-    fs.readFile("./src/data/data.json", function(err, data) {
-      if (err) {
-        throw err;
-      } else {
-        var newID = 0;
-        if (data.length > 0) {
-          var parseData = JSON.parse(data);
-          parseData.users.forEach(existingUser => {
-            if (existingUser.email == user.email) {
-              throw new Error("Email already in use!");
-            } else {
-              newID = parseInt(existingUser.id);
-            }
-          });
-        }
-        // Sets id to 1 + (id of last user), or 1 if none exist.
-        const newUser = {
-          id: (newID + 1).toString(),
-          name: user.name,
-          surname: user.surname,
-          cellPhone: user.cellPhone,
-          email: user.email,
-          password: user.password,
-          role: user.role
-        };
-        parseData.users.push(newUser);
-        res.status(200).json(user);
-        fs.writeFile("./src/data/data.json", JSON.stringify(parseData), function(err) {
-          if (err) {
-              throw err;
+router.post("/", (req, res) => {
+  const user = req.body;
+  if (!validationService.isValidRegisterBody(user)) {
+    throw new Error("Invalid payload");
+  }
+  fs.readFile("./src/data/data.json", function(err, data) {
+    if (err) {
+      throw err;
+    } else {
+      var newID = 0;
+      if (data.length > 0) {
+        var parseData = JSON.parse(data);
+        parseData.users.forEach(existingUser => {
+          if (existingUser.email == user.email) {
+            throw new Error("Email already in use!");
+          } else {
+            newID = parseInt(existingUser.id);
           }
-          console.log("-----Registration successful-----");
-          return parseData.users;
         });
       }
-    });
-  
-  });
+      // Sets id to 1 + (id of last user), or 1 if none exist.
+      const newUser = {
+        id: (newID + 1).toString(),
+        firstname: user.firstname,
+        lastname: user.lastname,
+        email: user.email,
+        password: user.password,
+      };
+      parseData.users.push(newUser);
+      fs.writeFile("./src/data/data.json", JSON.stringify(parseData), function(err) {
+        if (err) {
+          throw err;
+        }
+        console.log("-----Registration successful-----");
+        return res.status(200).json(newUser);
+      });
+    }
+  });  
+});
   
 
 //--------------------------------------User Login Function--------------------------------------//
-router.post("/login", (req, res) => {
+router.post("/authentication", (req, res) => {
   const user = req.body;
   if (!validationService.isValidRegisterBody(user)) {
     throw new Error400("Invalid payload");
@@ -76,9 +72,8 @@ router.post("/login", (req, res) => {
             email = true;
             if (existingUser.password == user.password) {
               console.log("-----Login successful-----");
-              res.status(200).json({ status: "Logged In" });
               password = true;
-              return;
+              return res.status(200).json(existingUser);
             }
           }
         });
@@ -139,7 +134,7 @@ router.post("/update", (req, res) => {
 
 
 //--------------------------------------Delete User Function-------------------------------------//
-router.post("/delete/:id", (req, res) => {
+router.delete("/:id", (req, res) => {
   fs.readFile("./src/data/data.json", function(err, data) {
     if (err) {
       throw err;
@@ -165,8 +160,8 @@ router.post("/delete/:id", (req, res) => {
           if (err) {
             throw err;
           }
-          res.status(200).json({ status: "User deleted" });
           console.log("-----Deletion successful-----");
+          return res.status(200).json({ status: "User deleted" });
         });
       } else {
         throw new Error("No users exist");
