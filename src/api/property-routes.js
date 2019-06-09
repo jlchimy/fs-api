@@ -19,7 +19,17 @@ router.get("/", (req, res) => {
 
 //-------------------------------------Get All Properties By Provider Function------------------------------------//
 router.get("/:userID", (req, res) => {
-  Property.getPropertiesByProvider(parseInt(req.params.userID), (err, result) => {
+  Property.getPropertyById(parseInt(req.params.userID), (err, result) => {
+    if (err) {
+      return res.status(400).json({message: "Could not find properties."});
+    }
+    return res.status(200).json(result);
+  })
+});
+
+//-------------------------------------Get Property By Provider Function------------------------------------//
+router.get("/:id", (req, res) => {
+  Property.getPropertiesByProvider(parseInt(req.params.id), (err, result) => {
     if (err) {
       return res.status(400).json({message: "Could not find properties."});
     }

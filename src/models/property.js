@@ -43,7 +43,7 @@ Property.getPropertyById = function (propertyId, result) {
       console.log("error: ", err);
       result(err, null);
     } else {
-      result(null, res.insertId);
+      result(null, res);
     }
   });
 };
