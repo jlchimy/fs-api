@@ -8,7 +8,7 @@ const Booking = require("../models/booking");
 //-------------------------------------Request Booking Function------------------------------------//
 router.post("/", (req, res) => {
   const booking = req.body;
-  Property.createProperty(booking, (err, result) => {
+  Booking.requestBooking(booking, (err, result) => {
     if (err) {
       if (err.code === 'ER_DUP_ENTRY') {
         return res.status(400).json({message: err.sqlMessage});

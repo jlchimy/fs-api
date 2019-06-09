@@ -43,6 +43,20 @@ Property.getPropertyById = function (propertyId, result) {
       console.log("error: ", err);
       result(err, null);
     } else {
+      result(null, res.insertId);
+    }
+  });
+};
+
+Property.getPropertiesByProvider = function (userID, result) {
+  mysqlConn.query("Select * from property where userID = ? ", userID, function (
+    err,
+    res
+  ) {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+    } else {
       result(null, res);
     }
   });
