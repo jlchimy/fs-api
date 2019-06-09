@@ -1,19 +1,19 @@
 var mysqlConn = require("../database/database");
 
 //Task object constructor
-var User = function (user) {
-  this.firstname = user.firstname;
-  this.lastname = user.lastname;
+var Provider = function (provider) {
+  this.firstname = provider.firstname;
+  this.lastname = provider.lastname;
   // this.cellPhone = user.cellPhone;
-  this.email = user.email;
-  this.password = user.password;
+  this.email = provider.email;
+  this.password = provider.password;
   // this.role = user.role;
   // this.date_created = user.new Date();
 }
 
 //------------------------------------Create User Function----------------------------------//
-User.createUser = function (newUser, result) {
-  mysqlConn.query("INSERT INTO user set ?", newUser, function (err, res) {
+Provider.createUser = function (newUser, result) {
+  mysqlConn.query("INSERT INTO provider set ?", newUser, function (err, res) {
     if (err) {
       console.log("error: ", err);
       result(err, null);
@@ -24,8 +24,8 @@ User.createUser = function (newUser, result) {
   });
 };
 
-User.getUserByEmail = function (email, result) {
-  mysqlConn.query("Select * from user where email = ?", email, function (err, res) {
+Provider.getUserByEmail = function (email, result) {
+  mysqlConn.query("Select * from provider where email = ?", email, function (err, res) {
     if (err) {
       console.log("error: ", err);
       result(err, null);
@@ -35,8 +35,8 @@ User.getUserByEmail = function (email, result) {
   });
 }
 
-User.getAllUsers = function (result) {
-  mysqlConn.query("Select * from user", function (err, res) {
+Provider.getAllUsers = function (result) {
+  mysqlConn.query("Select * from provider", function (err, res) {
     if (err) {
       console.log("error: ", err);
       result(err, null);
@@ -47,8 +47,8 @@ User.getAllUsers = function (result) {
   });
 };
 
-User.getUserById = function (userId, result) {
-  mysqlConn.query("Select * from user where id = ? ", userId, function (err, res) {
+Provider.getUserById = function (userId, result) {
+  mysqlConn.query("Select * from provider where id = ? ", userId, function (err, res) {
     if (err) {
       console.log("error: ", err);
       result(err, null);
@@ -59,8 +59,8 @@ User.getUserById = function (userId, result) {
 };
 
 //------------------------------------Update User Function----------------------------------//
-User.updateUserById = function (id, user, result) {
-  mysqlConn.query("UPDATE user SET ? WHERE id = ?",
+Provider.updateUserById = function (id, user, result) {
+  mysqlConn.query("UPDATE provider SET ? WHERE id = ?",
     [user, id],
     function (err, res) {
       if (err) {
@@ -73,8 +73,8 @@ User.updateUserById = function (id, user, result) {
 };
 
 //------------------------------------Delete User Function----------------------------------//
-User.removeUser = function (userId, result) {
-  mysqlConn.query("DELETE FROM user WHERE id = ?", userId, function (err, res) {
+Provider.removeUser = function (userId, result) {
+  mysqlConn.query("DELETE FROM provider WHERE id = ?", userId, function (err, res) {
     if (err) {
       console.log("error: ", err);
       result(null, err);
@@ -86,4 +86,4 @@ User.removeUser = function (userId, result) {
 
 
 
-module.exports = User;
+module.exports = Provider;

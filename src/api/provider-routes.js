@@ -1,14 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const User = require("../models/user");
-
-const ValidationService = require("../services/validation-service");
-const validationService = new ValidationService();
+const Provider = require("../models/provider");
 
 const UserService = require("../services/user-service");
 const userService = new UserService();
 
-//-------------------------------------Get All Users Function------------------------------------//
+//-------------------------------------Get All Properties Function------------------------------------//
 router.get("/", (req, res) => {
   userService
     .getUsers()
@@ -21,7 +18,7 @@ router.get("/", (req, res) => {
 });
 
 router.get("/:id", (req, res) => {
-  User.getUserById(parseInt(req.params.id), (err, result) => {
+  Provider.getUserById(parseInt(req.params.id), (err, result) => {
     if (err || result.length == 0) {
       return res.status(400).json({message: "User cannot be found"});
     }
@@ -29,33 +26,15 @@ router.get("/:id", (req, res) => {
       id: result[0].id,
       firstname: result[0].firstname,
       lastname: result[0].lastname,
-      email: result[0].lastname
+      email: result[0].email,
+      password: result[0].password
     };
 
     return res.status(200).json(userResponse);
   })
-})
-
-//-------------------------------------Register User Function------------------------------------//
-router.post("/", (req, res) => {
-  const user = req.body;
-  // if (!validationService.isValidRegisterBody(user)) {
-  //   throw new Error("Invalid payload");
-  // }
-  User.createUser(user, (err, result) => {
-    if (err) {
-      if (err.code === 'ER_DUP_ENTRY') {
-        return res.status(400).json({message: err.sqlMessage});
-      } else {
-        return res.status(500).json({message: "Failed to insert. Please try again."});
-      }
-    }
-    return res.status(200).json({id: result});
-  });
 });
 
-
-//--------------------------------------User Login Function--------------------------------------//
+//-------------------------------------Login User Function-------------------------------------//
 router.post("/authentication", (req, res) => {
   const user = req.body;
   // if (!validationService.isValidRegisterBody(user)) {
@@ -66,7 +45,7 @@ router.post("/authentication", (req, res) => {
   } else if (!user.password) {
     return res.status(401).json({message: "Please enter a password"});
   }
-  User.getUserByEmail(user.email, (err, result) => {
+  Provider.getUserByEmail(user.email, (err, result) => {
     if (err || result.length == 0) {
       return res.status(404).json({ message: "User not found."});
     }
@@ -79,11 +58,26 @@ router.post("/authentication", (req, res) => {
   });
 });
 
+//-------------------------------------Create Property Function------------------------------------//
+router.post("/", (req, res) => {
+  const user = req.body;
+  Provider.createUser(user, (err, result) => {
+    if (err) {
+      if (err.code === 'ER_DUP_ENTRY') {
+        return res.status(400).json({message: err.sqlMessage});
+      } else {
+        return res.status(500).json({message: "Failed to insert. Please try again."});
+      }
+    }
+    return res.status(200).json({id: result});
+  });
+});
 
-//--------------------------------------Update User Function-------------------------------------//
+
+//--------------------------------------Update Property Function-------------------------------------//
 router.post("/update/:id", (req, res) => {
   const user = req.body;
-  User.updateUserById(parseInt(req.params.id), user, (err, result) => {
+  Provider.updateUserById(parseInt(req.params.id), user, (err, result) => {
     console.log(err);
     console.log(result);
   });
@@ -91,9 +85,9 @@ router.post("/update/:id", (req, res) => {
 });
 
 
-//--------------------------------------Delete User Function-------------------------------------//
+//--------------------------------------Delete Property Function-------------------------------------//
 router.delete("/:id", (req, res) => {
-  User.removeUser(parseInt(req.params.id), (err, result) => {
+  Provider.removeUser(parseInt(req.params.id), (err, result) => {
     console.log(err);
     console.log(result);
   });

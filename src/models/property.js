@@ -74,6 +74,4 @@ Property.removeProperty = function (propertyId, result) {
   });
 };
 
-
-
 module.exports = Property;
