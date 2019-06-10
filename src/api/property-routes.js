@@ -28,7 +28,7 @@ router.get("/:userID", (req, res) => {
 });
 
 //-------------------------------------Get Property By Provider Function------------------------------------//
-router.get("/:id", (req, res) => {
+router.get("/provider/:id", (req, res) => {
   Property.getPropertiesByProvider(parseInt(req.params.id), (err, result) => {
     if (err) {
       return res.status(400).json({message: "Could not find properties."});
